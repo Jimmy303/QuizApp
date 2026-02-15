@@ -1,0 +1,107 @@
+@if (!hasStarted) {
+  <h1 style="text-align: center">Create a Quiz</h1>
+  <h2 style="text-align: center">Select Options</h2>
+  <br />
+  <p style="text-align: center">Number of Questions</p>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <mat-form-field>
+      <mat-label></mat-label>
+      <input matInput formControlName="amount" />
+      <mat-error If="form.get('amount')?.hasError('required')"> Amount is required </mat-error>
+    </mat-form-field>
+    <p style="text-align: center">Category</p>
+    <mat-form-field>
+      <mat-select formControlName="category">
+        <mat-option value="Any">Any Category</mat-option>
+        <mat-option value="9">General Knowledge</mat-option>
+        <mat-option value="10">Entertainment: Books</mat-option>
+        <mat-option value="11">Entertainment: Film</mat-option>
+        <mat-option value="12">Entertainment: Music</mat-option>
+        <mat-option value="13">Entertainment: Musicals & Theatres</mat-option>
+        <mat-option value="14">Entertainment: Television</mat-option>
+        <mat-option value="15">Entertainment: Video Games</mat-option>
+        <mat-option value="16">Entertainment: Board Games</mat-option>
+        <mat-option value="17">Science & Nature</mat-option>
+        <mat-option value="18">Science: Computers</mat-option>
+        <mat-option value="19">Science: Mathematics</mat-option>
+        <mat-option value="20">Mythology</mat-option>
+        <mat-option value="21">Sports</mat-option>
+        <mat-option value="22">Geography</mat-option>
+        <mat-option value="23">History</mat-option>
+        <mat-option value="24">Politics</mat-option>
+        <mat-option value="25">Art</mat-option>
+        <mat-option value="26">Celebrities</mat-option>
+        <mat-option value="27">Animals</mat-option>
+        <mat-option value="28">Vehicles</mat-option>
+        <mat-option value="29">Entertainment: Comics</mat-option>
+        <mat-option value="30">Science: Gadgets</mat-option>
+        <mat-option value="31">Entertainment: Japanese Anime & Manga</mat-option>
+        <mat-option value="32">Entertainment: Cartoon & Animation</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <p style="text-align: center">Difficulty</p>
+    <mat-form-field>
+      <mat-select formControlName="difficulty">
+        <mat-option value="Any">Any Difficulty</mat-option>
+        <mat-option value="easy">Easy</mat-option>
+        <mat-option value="medium">Medium</mat-option>
+        <mat-option value="hard">Hard</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <p style="text-align: center">Type</p>
+    <mat-form-field>
+      <mat-select formControlName="type">
+        <mat-option value="Any">Any Type</mat-option>
+        <mat-option value="multiple">Multiple Choice</mat-option>
+        <mat-option value="boolean">True / False</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <p style="text-align: center">Encoding</p>
+    <mat-form-field>
+      <mat-select formControlName="encoding">
+        <mat-option value="Default">Default Encoding</mat-option>
+        <mat-option value="url3986">URL Encoding (RFC 3986)</mat-option>
+        <mat-option value="base64">Base 64 Encoding</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </form>
+
+  <button (click)="onSubmit()" type="submit">Start Quiz</button>
+} @else {
+  <h1>Quiz Started</h1>
+  @if (loading()) {
+    <ng-container>
+      <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+    </ng-container>
+  } @else {
+    <div style="flex-wrap: wrap; gap: 10px">
+      <mat-card *ngFor="let q of questions()" style="width: 400px; margin-bottom: 10px">
+        <mat-card-header>
+          <mat-card-title>{{ q.question }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          @if (q.answers.length) {
+            <h4>Answers</h4>
+            <mat-radio-group
+              [value]="q.selectedAnswer"
+              (change)="onAnswerSelected(q, $event.value)"
+            >
+              <mat-radio-button *ngFor="let a of q.answers" [value]="a">
+                {{ a }}
+              </mat-radio-button>
+            </mat-radio-group>
+          }
+          @if (hasSubmitted) {
+            @if (!q.isCorrect) {
+              <mat-error> Answer is incorrect </mat-error>
+            } @else {
+              <mat-error> Answer is Correct! </mat-error>
+            }
+          }
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <button (click)="return()">Return</button>
+    <button (click)="submitAnswers()">Submit</button>
+  }
+}
